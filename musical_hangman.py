@@ -1,73 +1,20 @@
 import sys
 from random import choice
-
-HANGMANPICS = ['''
-  +---+
-  |   |
-  |
-  |
-  |
-  |
-=========''', '''
-  +---+
-  |   |
-  |   O
-  |
-  |
-  |
-=========''', '''
-  +---+
-  |   |
-  |   O
-  |   |
-  |
-  |
-=========''', '''
-  +---+
-  |   |
-  |   O
-  |  /|
-  |   
-  |
-  |
-=========''', '''
-  +---+
-  |   |
-  |   O
-  |  /|\\
-  |  
-  |
-=========''', '''
-  +---+
-  |   |
-  |   O
-  |  /|\\
-  |  / 
-  |
-=========''', '''
-  +---+
-  |   |
-  |   O
-  |  /|\\
-  |  / \\ 
-  |
-=========''']
+from hangman_pics import HANGMANPICS
 
 def main():
     # Print instructions
-    print("Welcome to Musical Hangman!")
-    print("A random English word will be selected and you have to guess it.")
-    print("You have X guesses in total, represented by the human in the hangman noose.")
-    print("When the hanged human is completed, you loose.")
+    print(*get_instructions(), sep="\n")
 
     
     # Select a word from words.txt file in data
+    # Open the words.txt file and read the lines into a list
     try:
         with open(".\data\words.txt") as file:
             words = file.readlines()
     except FileNotFoundError:
         sys.exit("File does not exist")
-
+    # Choose a word
     word = choice(words).strip()
 
     # REMOVE WHEN FINISHED TESTING
@@ -79,13 +26,13 @@ def main():
 
     # Display one "_" for each letter in the word
     word_scheme = []
-
     for _ in word:
         word_scheme.append("_")
 
+    # Guesses loop
     while (score < 6):
         # Display the initial hangman structure 
-        print(HANGMANPICS[score], *word_scheme)
+        print(HANGMANPICS[score], " ",  *word_scheme)
 
         if "_" not in word_scheme:
             sys.exit("You won! :)")
@@ -108,10 +55,17 @@ def main():
 
         print("End of guess: ", guess_counter, "Current score: ", score)
 
-        # Print the updated board
-        # Repeat until win or lose
+    # If they guess and loose
     print(HANGMANPICS[score], *word_scheme)
     sys.exit("You lost! :(")
+
+def get_instructions():
+    instructions = []
+    instructions.append("Welcome to Musical Hangman!")
+    instructions.append("A random English word will be selected and you have to guess it.")
+    instructions.append("You have 6 guesses in total, represented by the human in the hangman noose.")
+    instructions.append("When the hanged human is completed, you loose.")
+    return instructions
 
 if __name__ == "__main__":
     main()
