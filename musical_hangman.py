@@ -3,47 +3,91 @@ from random import choice
 import re
 from hangman_pics import HANGMANPICS
 
+class Hangman:
+    def __init__(self):
+        self.score = 0
+        self.wrong_guess = []
+        self.right_guess = []
+        self.word_scheme = []
+
+    @property
+    def score(self):
+        return self._score
+    
+    @score.setter
+    def score(self, score):
+        self._score = score
+
+    @property
+    def wrong_guess(self):
+        return self._wrong_guess
+    
+    @wrong_guess.setter
+    def wrong_guess(self, wrong_guess):
+        self._wrong_guess = wrong_guess
+    
+    @property
+    def right_guess(self):
+        return self._right_guess
+    
+    @right_guess.setter
+    def right_guess(self, right_guess):
+        self._right_guess = right_guess
+
+    @property
+    def word_scheme(self):
+        return self._word_scheme
+    
+    @word_scheme.setter
+    def word_scheme(self, word_scheme):
+        self._word_scheme = word_scheme
+    
+
+    def select_word(self):
+        # Select a word from words.txt file in data
+        # Open the words.txt file and read the lines into a list
+        try:
+            with open(".\data\words.txt") as file:
+                words = file.readlines()
+        except FileNotFoundError:
+            sys.exit("File does not exist")
+        
+        # Choose a word
+        word = choice(words).strip()
+
+        # Build the word_scheme
+        self.build_word_scheme(word)
+        return word
+    
+    def build_word_scheme(self, word):
+        # Display one "_" for each letter in the word
+        for _ in word:
+            self.word_scheme.append("_")
+
 def main():
+
+    hangman = Hangman()
+
     # Print instructions
     print(*get_instructions(), sep="\n")
-
-    
-    # Select a word from words.txt file in data
-    # Open the words.txt file and read the lines into a list
-    try:
-        with open(".\data\words.txt") as file:
-            words = file.readlines()
-    except FileNotFoundError:
-        sys.exit("File does not exist")
-    
+   
     # Choose a word
-    word = choice(words).strip()
+    word = hangman.select_word()
 
     # REMOVE WHEN FINISHED TESTING
     print(word)
 
-    # Initialize guess_counter, score, wrong guess list and word scheme 
-    guess_counter = 0
-    score = 0
-    wrong_guess = []
-    right_guess = []
-
-    # Display one "_" for each letter in the word
-    word_scheme = []
-    for _ in word:
-        word_scheme.append("_")
-
     # Guesses loop
-    while (score < 6):
+    while (hangman.score < 6):
         # Display the initial hangman structure 
-        print(HANGMANPICS[score], " ",  *word_scheme, "   Guessed:", *wrong_guess)
+        print(HANGMANPICS[hangman.score], " ",  *hangman.word_scheme, "   Guessed:", *hangman.wrong_guess)
 
         # Check to see if the user won
-        if "_" not in word_scheme:
+        if "_" not in hangman.word_scheme:
             sys.exit("You won! :)")
 
         # Ask for a guess from the user
-        guess = get_guess(wrong_guess, right_guess)
+        guess = get_guess(hangman.wrong_guess, hangman.right_guess)
 
         # Evaluate the guess
         if guess in word:
@@ -52,18 +96,15 @@ def main():
             # Returns a list of all the indexes
             indexes = [i for i in range(len(word)) if word.startswith(guess, i)] 
             for i in indexes:
-                word_scheme[i] = guess.upper()
-                right_guess.append(guess.upper())
+                hangman.word_scheme[i] = guess.upper()
+                hangman.right_guess.append(guess.upper())
         else:
-            score += 1
-            wrong_guess.append(guess.upper())
+            hangman.score += 1
+            hangman.wrong_guess.append(guess.upper())
         
-        guess_counter += 1
-
-        print("End of guess: ", guess_counter, "Current score: ", score)
 
     # If they guess and loose
-    print(HANGMANPICS[score], *word_scheme)
+    print(HANGMANPICS[hangman.score], *hangman.word_scheme)
     sys.exit(f"You lost! :( The word was {word.upper()}")
 
 def get_instructions():
@@ -82,7 +123,6 @@ def get_guess(wrong_guess, right_guess):
     while guess.upper() in wrong_guess or guess.upper() in right_guess:
         print("You already guessed this letter. Please, guess again.")
         guess = input("Guess: ").strip().lower()
-    print(f"{guess in wrong_guess}")
     return guess
 
 
