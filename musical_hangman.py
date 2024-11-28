@@ -1,6 +1,8 @@
 import sys
 from random import choice
 import re
+import json
+import requests
 from hangman_pics import HANGMANPICS
 
 class Hangman:
@@ -57,6 +59,7 @@ class Hangman:
 
         # Build the word_scheme
         self.build_word_scheme(word)
+
         return word
     
     def build_word_scheme(self, word):
@@ -65,25 +68,55 @@ class Hangman:
             self.word_scheme.append("_")
 
 def main():
-
+    # Create an instance of Hangman class
     hangman = Hangman()
 
     # Print instructions
     print(*get_instructions(), sep="\n")
    
     # Choose a word
-    word = hangman.select_word()
+    # word = hangman.select_word()
 
+    # LYRIST API
+    response = requests.get("https://lyrist.vercel.app/api/Chandelier/Sia")
+    lyrics = response.json()["lyrics"].split("\n")
+    
+    # Remove annotations and empty lines from the lyrics list
+    lines_to_remove = []
+    for line in lyrics:
+        if ("[" in line) or (line == ""):
+            lines_to_remove.append(line)
+    for line in lines_to_remove:
+        lyrics.remove(line)
+
+    # Choose a lyric
+    lyric = choice(lyrics)
     # REMOVE WHEN FINISHED TESTING
-    print(word)
+    print(lyric)
+    # Separate into a word list
+    lyric_words = lyric.split(" ")
+    word = choice(lyric_words)
+    # If it has punctuation, change the word
+    while re.search(r"[^a-zA-Z]", word) is not None:
+        word = choice(lyric_words)
 
+    # Get a list of indexes of the first letter of every occurence of the word in the lyric.
+    lyric_indexes = [i for i in range(len(lyric)) if lyric.startswith(word, i)]
+
+    phrase_scheme = list(lyric)
+    # Switch the chosen word's characters for "_"
+    for i in lyric_indexes:
+        for j in range(len(word)):
+            phrase_scheme[i + j] = "_"
+    
     # Guesses loop
     while (hangman.score < 6):
         # Display the initial hangman structure 
-        print(HANGMANPICS[hangman.score], " ",  *hangman.word_scheme, "   Guessed:", *hangman.wrong_guess)
+        print(HANGMANPICS[hangman.score], " ",  *phrase_scheme)
+        print("Already guessed:", *hangman.wrong_guess)
 
         # Check to see if the user won
-        if "_" not in hangman.word_scheme:
+        if "_" not in phrase_scheme:
             sys.exit("You won! :)")
 
         # Ask for a guess from the user
@@ -92,12 +125,13 @@ def main():
         # Evaluate the guess
         if guess in word:
             print("The guessed letter is in the word")
-            # Find the indexes of the first char of the substrings that start with the guessed letter, 
+            # Find the indexes of the first char of the substrings within the word that start with the guessed letter, 
             # Returns a list of all the indexes
-            indexes = [i for i in range(len(word)) if word.startswith(guess, i)] 
-            for i in indexes:
-                hangman.word_scheme[i] = guess.upper()
-                hangman.right_guess.append(guess.upper())
+            word_indexes = [i for i in range(len(word)) if word.startswith(guess, i)] 
+            for i in lyric_indexes:
+                for j in word_indexes:
+                    phrase_scheme[i + j] = guess.upper()
+                    hangman.right_guess.append(guess.upper())
         else:
             hangman.score += 1
             hangman.wrong_guess.append(guess.upper())
@@ -114,6 +148,8 @@ def get_instructions():
     instructions.append("You have 6 guesses in total, represented by the human in the hangman noose.")
     instructions.append("When the hanged human is completed, you loose.")
     return instructions
+
+
 
 def get_guess(wrong_guess, right_guess):
     guess = input("Guess: ").strip().lower()
