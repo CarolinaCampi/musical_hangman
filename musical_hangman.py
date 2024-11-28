@@ -1,5 +1,6 @@
 import sys
 from random import choice
+import re
 from hangman_pics import HANGMANPICS
 
 def main():
@@ -14,6 +15,7 @@ def main():
             words = file.readlines()
     except FileNotFoundError:
         sys.exit("File does not exist")
+    
     # Choose a word
     word = choice(words).strip()
 
@@ -34,11 +36,12 @@ def main():
         # Display the initial hangman structure 
         print(HANGMANPICS[score], " ",  *word_scheme)
 
+        # Check to see if the user won
         if "_" not in word_scheme:
             sys.exit("You won! :)")
 
         # Ask for a guess from the user
-        guess = input("Guess: ").strip().lower()
+        guess = get_guess()
 
         # Evaluate the guess
         if guess in word:
@@ -66,6 +69,14 @@ def get_instructions():
     instructions.append("You have 6 guesses in total, represented by the human in the hangman noose.")
     instructions.append("When the hanged human is completed, you loose.")
     return instructions
+
+def get_guess():
+    guess = input("Guess: ").strip().lower()
+    while re.fullmatch(r"^[a-z]$", guess) is None:
+        print("Please, guess a single letter.")
+        guess = input("Guess: ").strip().lower()
+    return guess
+
 
 if __name__ == "__main__":
     main()
