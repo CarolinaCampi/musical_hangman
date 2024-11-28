@@ -36,8 +36,6 @@ class Hangman:
     def right_guess(self, right_guess):
         self._right_guess = right_guess
     
-
-
     @property
     def phrase_scheme(self):
         return self._phrase_scheme
@@ -193,9 +191,11 @@ def main():
         hangman.evaluate_guess(word, guess)
         
 
-    # If they guess and loose
+    # If they guessed 6 times and lose
     print(HANGMANPICS[hangman.score], *hangman.phrase_scheme)
-    sys.exit(f"You lost! :( The word was {word.upper()}")
+
+    print(get_lose_message())
+    
 
 
 def choose_play_mode():
@@ -209,6 +209,7 @@ def choose_play_mode():
         mode = input("Mode: ")
     return mode.upper()
 
+# Move to class?
 def get_instructions(mode):
     instructions = []
     if mode == "A":
@@ -233,6 +234,15 @@ def get_guess(wrong_guess, right_guess):
         guess = input("Guess: ").strip().lower()
     return guess
 
+def get_lose_message(word, mode, lyric=None):
+    message = []
+    message.append(f"You lost! :( The word was {word.upper()}")
+    if mode == "B":
+        message.append("The complete lyric is:")
+        message.append(lyric)
+        message.append("From the song Chandelier by Sia")
+        message.append("Spotify link: ")
+    
 
 if __name__ == "__main__":
     main()
