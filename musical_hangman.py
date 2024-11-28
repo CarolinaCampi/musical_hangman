@@ -3,6 +3,7 @@ from random import choice
 import re
 import json
 import requests
+import csv
 from hangman_pics import HANGMANPICS
 
 class Hangman:
@@ -83,9 +84,18 @@ class Hangman:
 class Musical_Hangman(Hangman):
     def __init__(self):
         super().__init__()
+        self.song = {}
         self.lyric = ""
         self.lyric_indexes = []
     
+    @property
+    def song(self):
+        return self._song
+    
+    @song.setter
+    def song(self, song):
+        self._song = song
+   
     @property
     def lyric(self):
         return self._lyric
@@ -104,8 +114,15 @@ class Musical_Hangman(Hangman):
 
     def select_word(self):
         # Choose a word
-        # LYRIST API
-        response = requests.get("https://lyrist.vercel.app/api/Chandelier/Sia")
+        # 1. User chooses a genre
+        category = self.choose_category()
+
+        # 2. Choose a random song from that file
+        self.get_random_song(category)
+
+        # Get the lyrics from LYRIST API
+        response = requests.get("https://lyrist.vercel.app/api/" + self.song["song"].replace(" ", "_") + "/" + self.song["artist"].replace(" ", "_"))
+        # Get a list of the individual lines of lyrics
         lyrics = response.json()["lyrics"].split("\n")
         
         # Remove annotations and empty lines from the lyrics list
@@ -130,6 +147,44 @@ class Musical_Hangman(Hangman):
         self.build_phrase_scheme(word, self.lyric)
 
         return word
+    
+    def choose_category(self):
+        print("Please, pick a category by typing 1, 2, 3 or 4:")
+        print("1. Best of the 80s")
+        print("2. 2000s Pop")
+        print("3. 2000s Rock")
+        print("4. Best of all time")
+        category = input("Category: ")
+        while re.fullmatch(r"[1-4]", category) is None:
+            print("Please type a number between 1 and 4.")
+            category = input("Category: ")
+        return category
+    
+    def get_random_song(self, category):
+        match category:
+            case "1":
+                path = ".\\data\\80ssongs.csv"
+            case "2":
+                path = ".\\data\\80ssongs.csv"
+            case "3":
+                path = ".\\data\\80ssongs.csv"
+            case "4":
+                path = ".\\data\\80ssongs.csv"
+            case _:
+                # Leave the path for best of all time
+                path = ".\\data\\80ssongs.csv"
+
+        songs = []
+        try:
+            with open(path) as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    songs.append({"song": row["song"], "artist": row["artist"]})
+        except FileNotFoundError:
+            sys.exit("File does not exist")
+
+        self.song = choice(songs)
+        return self.song
 
     def build_phrase_scheme(self, word, lyric):
         # Get a list of indexes of the first letter of every occurence of the word in the lyric.
@@ -194,7 +249,7 @@ def main():
     # If they guessed 6 times and lose
     print(HANGMANPICS[hangman.score], *hangman.phrase_scheme)
 
-    print(get_lose_message())
+    print(*get_lose_message(word, mode))
     
 
 
@@ -242,7 +297,7 @@ def get_lose_message(word, mode, lyric=None):
         message.append(lyric)
         message.append("From the song Chandelier by Sia")
         message.append("Spotify link: ")
-    
+    return message
 
 if __name__ == "__main__":
     main()
