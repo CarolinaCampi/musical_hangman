@@ -119,26 +119,18 @@ class Musical_Hangman(Hangman):
 
         # 2. Choose a random song from that file
         self.get_random_song(category)
+        print(self.song)
 
-        # Get the lyrics from LYRIST API
-        response = requests.get("https://lyrist.vercel.app/api/" + self.song["song"].replace(" ", "_") + "/" + self.song["artist"].replace(" ", "_"))
-        # Get a list of the individual lines of lyrics
-        lyrics = response.json()["lyrics"].split("\n")
+        # 3. Get the lyrics from LYRIST API
+        lyrics = self.get_lyrics(self.song)
         
-        # Remove annotations and empty lines from the lyrics list
-        lines_to_remove = []
-        for line in lyrics:
-            if ("[" in line) or (line == ""):
-                lines_to_remove.append(line)
-        for line in lines_to_remove:
-            lyrics.remove(line)
-
-        # Choose a lyric
+        # 4. Choose a lyric
         self.lyric = choice(lyrics)
 
-        # Separate into a word list
+        # 5. Separate into a word list
         lyric_words = self.lyric.split(" ")
 
+        # 6. Choose a random valid (without punctuation) word
         word = choice(lyric_words)
         # If it has punctuation, change the word
         while re.search(r"[^a-zA-Z]", word) is not None:
@@ -165,14 +157,14 @@ class Musical_Hangman(Hangman):
             case "1":
                 path = ".\\data\\80ssongs.csv"
             case "2":
-                path = ".\\data\\80ssongs.csv"
+                path = ".\\data\\2000spopsongs.csv"
             case "3":
                 path = ".\\data\\80ssongs.csv"
             case "4":
-                path = ".\\data\\80ssongs.csv"
+                path = ".\\data\\bestsongs.csv"
             case _:
                 # Leave the path for best of all time
-                path = ".\\data\\80ssongs.csv"
+                path = ".\\data\\bestsongs.csv"
 
         songs = []
         try:
@@ -185,6 +177,22 @@ class Musical_Hangman(Hangman):
 
         self.song = choice(songs)
         return self.song
+    
+    def get_lyrics(self, song):
+        # Get the lyrics from LYRIST API
+        response = requests.get("https://lyrist.vercel.app/api/" + song["song"].replace(" ", "_") + "/" + song["artist"].replace(" ", "_"))
+        # Get a list of the individual lines of lyrics
+        lyrics = response.json()["lyrics"].split("\n")
+        
+        # Remove annotations and empty lines from the lyrics list
+        lines_to_remove = []
+        for line in lyrics:
+            if ("[" in line) or (line == ""):
+                lines_to_remove.append(line)
+        for line in lines_to_remove:
+            lyrics.remove(line)
+
+        return lyrics
 
     def build_phrase_scheme(self, word, lyric):
         # Get a list of indexes of the first letter of every occurence of the word in the lyric.
@@ -211,6 +219,7 @@ class Musical_Hangman(Hangman):
         else:
             self.score += 1
             self.wrong_guess.append(guess.upper())
+
 
 def main():
 
