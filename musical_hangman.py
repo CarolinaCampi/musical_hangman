@@ -12,6 +12,12 @@ class Hangman:
         self.wrong_guess = []
         self.right_guess = []
         self.phrase_scheme = []
+        self.instructions = [
+            "Welcome to traditional Hangman!",
+            "A random English word will be selected and you have to guess it.",
+            "You have 6 guesses in total, represented by the human in the hangman noose.",
+            "When the hanged human is completed, you loose.",
+        ]
 
     @property
     def score(self):
@@ -80,6 +86,11 @@ class Hangman:
             self.score += 1
             self.wrong_guess.append(guess.upper())
 
+    def get_lose_message(self, word):
+        message = []
+        message.append(f"You lost! :( The word was {word.upper()}")
+        message.append("You can check out the definition at https://www.merriam-webster.com/dictionary/" + word)
+        return message
 
 class Musical_Hangman(Hangman):
     def __init__(self):
@@ -87,6 +98,12 @@ class Musical_Hangman(Hangman):
         self.song = {}
         self.lyric = ""
         self.lyric_indexes = []
+        self.instructions = [
+            "Welcome to musical Hangman!",
+            "A random word from a lyric will be selected and you have to guess it.",
+            "You have 6 guesses in total, represented by the human in the hangman noose.",
+            "When the hanged human is completed, you loose.", 
+        ]
     
     @property
     def song(self):
@@ -220,6 +237,14 @@ class Musical_Hangman(Hangman):
             self.score += 1
             self.wrong_guess.append(guess.upper())
 
+    def get_lose_message(self, word):
+        message = []
+        message.append(f"You lost! :( The word was {word.upper()}")
+        message.append("The complete lyric is:")
+        message.append(self.lyric)
+        message.append(f"From the song {self.song["song"]} by {self.song["song"]}")
+        message.append("Spotify link: ")
+        return message
 
 def main():
 
@@ -233,14 +258,14 @@ def main():
         hangman = Musical_Hangman()
 
     # Print instructions
-    print(*get_instructions(mode), sep="\n")
+    print(*hangman.instructions, sep="\n")
 
     # Choose a word
     word = hangman.select_word()
     
     # Guesses loop
     while (hangman.score < 6):
-        # Display the initial hangman structure 
+        # Display the hangman structure 
         print(HANGMANPICS[hangman.score], " ",  *hangman.phrase_scheme)
         print("Already guessed:", *hangman.wrong_guess)
 
@@ -257,8 +282,10 @@ def main():
 
     # If they guessed 6 times and lose
     print(HANGMANPICS[hangman.score], *hangman.phrase_scheme)
+    print("Already guessed:", *hangman.wrong_guess)
 
-    print(*get_lose_message(word, mode))
+    # TODO: REVIEW AND MODIFY
+    print(*hangman.get_lose_message(word), sep="\n")
     
 
 
@@ -273,20 +300,6 @@ def choose_play_mode():
         mode = input("Mode: ")
     return mode.upper()
 
-# Move to class?
-def get_instructions(mode):
-    instructions = []
-    if mode == "A":
-        instructions.append("Welcome to traditional Hangman!")
-        instructions.append("A random English word will be selected and you have to guess it.")
-        instructions.append("You have 6 guesses in total, represented by the human in the hangman noose.")
-        instructions.append("When the hanged human is completed, you loose.")
-    else:
-        instructions.append("Welcome to musical Hangman!")
-        instructions.append("A random word from a lyric will be selected and you have to guess it.")
-        instructions.append("You have 6 guesses in total, represented by the human in the hangman noose.")
-        instructions.append("When the hanged human is completed, you loose.") 
-    return instructions
 
 def get_guess(wrong_guess, right_guess):
     guess = input("Guess: ").strip().lower()
@@ -298,15 +311,7 @@ def get_guess(wrong_guess, right_guess):
         guess = input("Guess: ").strip().lower()
     return guess
 
-def get_lose_message(word, mode, lyric=None):
-    message = []
-    message.append(f"You lost! :( The word was {word.upper()}")
-    if mode == "B":
-        message.append("The complete lyric is:")
-        message.append(lyric)
-        message.append("From the song Chandelier by Sia")
-        message.append("Spotify link: ")
-    return message
+
 
 if __name__ == "__main__":
     main()
