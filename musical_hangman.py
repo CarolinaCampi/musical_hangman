@@ -86,9 +86,9 @@ class Hangman:
             self.score += 1
             self.wrong_guess.append(guess.upper())
 
-    def get_lose_message(self, word):
+    def get_end_message(self, outcome, word):
         message = []
-        message.append(f"You lost! :( The word was {word.upper()}")
+        message.append(f"You {outcome}! The word was {word.upper()}")
         message.append("You can check out the definition at https://www.merriam-webster.com/dictionary/" + word)
         return message
 
@@ -237,14 +237,15 @@ class Musical_Hangman(Hangman):
             self.score += 1
             self.wrong_guess.append(guess.upper())
 
-    def get_lose_message(self, word):
+    def get_end_message(self, outcome, word):
         message = []
-        message.append(f"You lost! :( The word was {word.upper()}")
+        message.append(f"You {outcome}! The word was {word.upper()}")
         message.append("The complete lyric is:")
         message.append(self.lyric)
-        message.append(f"From the song {self.song["song"]} by {self.song["song"]}")
+        message.append(f"From the song {self.song["song"]} by {self.song["artist"]}")
         message.append("Spotify link: ")
         return message
+
 
 def main():
 
@@ -271,7 +272,8 @@ def main():
 
         # Check to see if the user won
         if "_" not in hangman.phrase_scheme:
-            sys.exit("You won! :)")
+            print(*hangman.get_end_message("won", word), sep="\n")
+            sys.exit()
 
         # Ask for a guess from the user
         guess = get_guess(hangman.wrong_guess, hangman.right_guess)
@@ -284,8 +286,8 @@ def main():
     print(HANGMANPICS[hangman.score], *hangman.phrase_scheme)
     print("Already guessed:", *hangman.wrong_guess)
 
-    # TODO: REVIEW AND MODIFY
-    print(*hangman.get_lose_message(word), sep="\n")
+    # Print the lose message
+    print(*hangman.get_end_message("lost", word), sep="\n")
     
 
 
