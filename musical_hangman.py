@@ -242,12 +242,56 @@ class Musical_Hangman(Hangman):
         message.append(f"You {outcome}! The word was {word.upper()}")
         message.append("The complete lyric is:")
         message.append(self.lyric)
-        message.append(f"From the song {self.song["song"]} by {self.song["artist"]}")
-        message.append("Spotify link: ")
+        message.append(f"From the song {self.song["song"].upper()} by {self.song["artist"].upper()}")
+        
+        url = "https://accounts.spotify.com/api/token"
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = {
+            "grant_type": "client_credentials",
+            "client_id": "c9b115e0664d451394c2b4121968154d",
+            "client_secret": "4550ec5a054f413db26143ee8b485706"
+        }
+    
+        # Make the POST request
+        response = requests.post(url, headers=headers, data=data)
+    
+        # Check if the request was successful
+        if response.status_code == 200:
+            print("Success!")
+            # print(response.json())  # Print the response body as JSON
+            access_token = response.json()["access_token"]
+        else:
+            print(f"Request failed with status code {response.status_code}")
+            print(response.text)  # Print the response body
+
+        url = f"https://api.spotify.com/v1/search?q=remaster%2520track%3A{self.song["song"].replace(" ", "%2520")}%2520artist%3A{self.song["artist"].replace(" ", "%2520")}&type=track&limit=1&offset=0"
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
+
+        # Make the POST request
+        response = requests.get(url, headers=headers)
+        # print(response)
+    
+        # Check if the request was successful
+        if response.status_code == 200:
+            print("Success!")
+            # print(response.json())  # Print the response body as JSON
+        else:
+            print(f"Request failed with status code {response.status_code}")
+            print(response.text)  # Print the response body
+        # print("TRACKS ITEMS ALBUM")
+        # print(response.json()["tracks"]["items"][0]["external_urls"]["spotify"])
+
+        spotify_link = f"{response.json()["tracks"]["items"][0]["external_urls"]["spotify"]}"
+        message.append("Spotify link: " + spotify_link)
         return message
 
 
 def main():
+
 
     # Ask the user for mode of play
     mode = choose_play_mode()
