@@ -1,7 +1,6 @@
 import sys
 from random import choice
 import re
-import json
 import requests
 import csv
 from hangman_pics import HANGMANPICS
@@ -244,6 +243,12 @@ class Musical_Hangman(Hangman):
         message.append(self.lyric)
         message.append(f"From the song {self.song["song"].upper()} by {self.song["artist"].upper()}")
         
+
+        message.append("Spotify link: " + self.get_spotify_track_url())
+        return message
+    
+    def get_spotify_track_url(self):
+        # Get access token
         url = "https://accounts.spotify.com/api/token"
         headers = {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -259,39 +264,36 @@ class Musical_Hangman(Hangman):
     
         # Check if the request was successful
         if response.status_code == 200:
-            print("Success!")
+            # print("Success!")
             # print(response.json())  # Print the response body as JSON
             access_token = response.json()["access_token"]
         else:
             print(f"Request failed with status code {response.status_code}")
             print(response.text)  # Print the response body
 
-        url = f"https://api.spotify.com/v1/search?q=remaster%2520track%3A{self.song["song"].replace(" ", "%2520")}%2520artist%3A{self.song["artist"].replace(" ", "%2520")}&type=track&limit=1&offset=0"
-        headers = {
+        search_url = f"https://api.spotify.com/v1/search?q=remaster%2520track%3A{self.song["song"].replace(" ", "%2520")}%2520artist%3A{self.song["artist"].replace(" ", "%2520")}&type=track&limit=1&offset=0"
+        
+        search_headers = {
             "Authorization": f"Bearer {access_token}"
         }
 
         # Make the POST request
-        response = requests.get(url, headers=headers)
-        # print(response)
+        search_response = requests.get(search_url, headers=search_headers)
     
         # Check if the request was successful
-        if response.status_code == 200:
-            print("Success!")
-            # print(response.json())  # Print the response body as JSON
+        if search_response.status_code == 200:
+            # print("Success!")
+            # print(search_response.json())  # Print the response body as JSON
+            return f"{search_response.json()["tracks"]["items"][0]["external_urls"]["spotify"]}"
         else:
-            print(f"Request failed with status code {response.status_code}")
-            print(response.text)  # Print the response body
-        # print("TRACKS ITEMS ALBUM")
-        # print(response.json()["tracks"]["items"][0]["external_urls"]["spotify"])
+            print(f"Request failed with status code {search_response.status_code}")
+            print(search_response.text)  # Print the search_response body
+            return "Error with Spotify API request and/or response processing"
 
-        spotify_link = f"{response.json()["tracks"]["items"][0]["external_urls"]["spotify"]}"
-        message.append("Spotify link: " + spotify_link)
-        return message
+        
 
 
 def main():
-
 
     # Ask the user for mode of play
     mode = choose_play_mode()
