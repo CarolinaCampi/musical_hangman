@@ -4,6 +4,7 @@ import re
 import requests
 import csv
 from hangman_pics import HANGMANPICS
+from simple_colors import *
 
 class Hangman:
     def __init__(self):
@@ -12,10 +13,14 @@ class Hangman:
         self.right_guess = []
         self.phrase_scheme = []
         self.instructions = [
-            "Welcome to traditional Hangman!",
-            "A random English word will be selected and you have to guess it.",
+            "",
+            cyan("You chose traditional Hangman!"),
+            "",
+            "Here a random English word will be selected and you have to guess it.",
             "You have 6 guesses in total, represented by the human in the hangman noose.",
             "When the hanged human is completed, you loose.",
+            "",
+
         ]
 
     @property
@@ -87,8 +92,10 @@ class Hangman:
 
     def get_end_message(self, outcome, word):
         message = []
-        message.append(f"You {outcome}! The word was {word.upper()}")
+        message.append(get_win_lose(outcome))
+        message.append(cyan(f"The word was {word.upper()}"))
         message.append("You can check out the definition at https://www.merriam-webster.com/dictionary/" + word)
+        message.append("")
         return message
 
 class Musical_Hangman(Hangman):
@@ -98,10 +105,13 @@ class Musical_Hangman(Hangman):
         self.lyric = ""
         self.lyric_indexes = []
         self.instructions = [
-            "Welcome to musical Hangman!",
+            "",
+            yellow("You chose Musical Hangman!"),
+            "",
             "A random word from a lyric will be selected and you have to guess it.",
             "You have 6 guesses in total, represented by the human in the hangman noose.",
-            "When the hanged human is completed, you loose.", 
+            "When the hanged human is completed, you loose.",
+            "", 
         ]
     
     @property
@@ -157,14 +167,14 @@ class Musical_Hangman(Hangman):
         return word
     
     def choose_category(self):
-        print("Please, pick a category by typing 1, 2, 3 or 4:")
-        print("1. Best of the 80s")
-        print("2. 2000s Pop")
-        print("3. 2000s Rock")
-        print("4. Best of all time")
+        print(yellow("Please, pick a category by typing 1, 2, 3 or 4:"))
+        print("     1. Best of the 80s")
+        print("     2. 2000s Pop")
+        print("     3. 2000s Rock")
+        print("     4. Best of all time")
         category = input("Category: ")
         while re.fullmatch(r"[1-4]", category) is None:
-            print("Please type a number between 1 and 4.")
+            print(red("Please type a number between 1 and 4."))
             category = input("Category: ")
         return category
     
@@ -238,13 +248,15 @@ class Musical_Hangman(Hangman):
 
     def get_end_message(self, outcome, word):
         message = []
-        message.append(f"You {outcome}! The word was {word.upper()}")
+        message.append(get_win_lose(outcome))
+        message.append(yellow(f"The word was {word.upper()}"))
+        message.append("")
         message.append("The complete lyric is:")
-        message.append(self.lyric)
+        message.append(green(self.lyric, "italic"))
         message.append(f"From the song {self.song["song"].upper()} by {self.song["artist"].upper()}")
-        
-
-        message.append("Spotify link: " + self.get_spotify_track_url())
+        message.append("")
+        message.append("Listen here: " + blue(self.get_spotify_track_url(), "underlined"))
+        message.append("")
         return message
     
     def get_spotify_track_url(self):
@@ -314,7 +326,8 @@ def main():
     while (hangman.score < 6):
         # Display the hangman structure 
         print(HANGMANPICS[hangman.score], " ",  *hangman.phrase_scheme)
-        print("Already guessed:", *hangman.wrong_guess)
+        print(black("Already guessed:", "italic"), *hangman.wrong_guess)
+        print("")
 
         # Check to see if the user won
         if "_" not in hangman.phrase_scheme:
@@ -330,7 +343,8 @@ def main():
 
     # If they guessed 6 times and lose
     print(HANGMANPICS[hangman.score], *hangman.phrase_scheme)
-    print("Already guessed:", *hangman.wrong_guess)
+    print(black("Already guessed:", "italic"), *hangman.wrong_guess)
+    print("")
 
     # Print the lose message
     print(*hangman.get_end_message("lost", word), sep="\n")
@@ -338,27 +352,38 @@ def main():
 
 
 def choose_play_mode():
-    print("Hi! Welcome to Musical Hangman!")
+    print(green('''
++-------------------------------------+
+|                                     |
+|     WELCOME TO MUSICAL HANGMAN      |
+|                                     |
++-------------------------------------+
+''', "bright"))
     print("Please choose between our two modes by typing A or B:")
-    print("A) Tradicional Hangman")
-    print("B) Musical Hangman")
-    mode = input("Mode: ")
+    print(cyan("    A) Tradicional Hangman"))
+    print(yellow("    B) Musical Hangman"))
+    mode = input("Chosen mode: ")
     while re.fullmatch(r"^[abAB]$", mode) is None:
-        print("Please type A or B.")
-        mode = input("Mode: ")
+        print(red("Please type A or B."))
+        mode = input("Chosen mode: ")
     return mode.upper()
 
 
 def get_guess(wrong_guess, right_guess):
-    guess = input("Guess: ").strip().lower()
+    guess = input(magenta("Guess: ", "bright")).strip().lower()
     while re.fullmatch(r"^[a-z]$", guess) is None:
-        print("Please, guess a single letter.")
+        print(red("Please, guess a single letter."))
         guess = input("Guess: ").strip().lower()
     while guess.upper() in wrong_guess or guess.upper() in right_guess:
-        print("You already guessed this letter. Please, guess again.")
+        print(red("You already guessed this letter. Please, guess again."))
         guess = input("Guess: ").strip().lower()
     return guess
 
+def get_win_lose(outcome):
+    if outcome == "won":
+        return (green("Congratulations! You won :)", "reverse"))
+    else:
+        return (red("You lost :(", "reverse"))
 
 
 if __name__ == "__main__":
