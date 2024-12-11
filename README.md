@@ -155,6 +155,7 @@ https://github.com/lyricstify/api
 https://github.com/othneildrew/Best-README-Template/blob/main/BLANK_README.md
 https://developer.spotify.com/documentation/web-api
 https://pypi.org/project/simple-colors/
+https://pypi.org/project/pytest/
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

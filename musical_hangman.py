@@ -20,7 +20,6 @@ class Hangman:
             "You have 6 guesses in total, represented by the human in the hangman noose.",
             "When the hanged human is completed, you loose.",
             "",
-
         ]
 
     @property
@@ -55,9 +54,8 @@ class Hangman:
     def phrase_scheme(self, phrase_scheme):
         self._phrase_scheme = phrase_scheme
     
-
+    # Select a word from words.txt file in data
     def select_word(self):
-        # Select a word from words.txt file in data
         # Open the words.txt file and read the lines into a list
         try:
             with open(".\\data\\words.txt") as file:
@@ -78,6 +76,7 @@ class Hangman:
         for _ in word:
             self.phrase_scheme.append("_")
 
+
     def evaluate_guess(self, word, guess):
         # Evaluate the guess
         if guess in word:
@@ -97,6 +96,7 @@ class Hangman:
         message.append("You can check out the definition at https://www.merriam-webster.com/dictionary/" + word)
         message.append("")
         return message
+
 
 class Musical_Hangman(Hangman):
     def __init__(self):
@@ -138,8 +138,8 @@ class Musical_Hangman(Hangman):
     def lyric_indexes(self, lyric_indexes):
         self._lyric_indexes = lyric_indexes
 
+    # Choose a word from a random lyric in a song within the appropriate txt file
     def select_word(self):
-        # Choose a word
         # 1. User chooses a genre
         category = self.choose_category()
 
@@ -172,13 +172,16 @@ class Musical_Hangman(Hangman):
         print("     2. 2000s Pop")
         print("     3. 2000s Rock")
         print("     4. Best of all time")
+
         category = input("Category: ")
         while re.fullmatch(r"[1-4]", category) is None:
             print(red("Please type a number between 1 and 4."))
             category = input("Category: ")
+
         return category
     
     def get_random_song(self, category):
+        # Define the path of the txt based on the category selected by user
         match category:
             case "1":
                 path = ".\\data\\80ssongs.csv"
@@ -192,6 +195,7 @@ class Musical_Hangman(Hangman):
                 # Leave the path for best of all time
                 path = ".\\data\\bestsongs.csv"
 
+        # Open the file and read all the songs into a list
         songs = []
         try:
             with open(path) as file:
@@ -201,7 +205,9 @@ class Musical_Hangman(Hangman):
         except FileNotFoundError:
             sys.exit("File does not exist")
 
+        # Select a random song
         self.song = choice(songs)
+
         return self.song
     
     def get_lyrics(self, song):
@@ -276,8 +282,6 @@ class Musical_Hangman(Hangman):
     
         # Check if the request was successful
         if response.status_code == 200:
-            # print("Success!")
-            # print(response.json())  # Print the response body as JSON
             access_token = response.json()["access_token"]
         else:
             print(f"Request failed with status code {response.status_code}")
@@ -294,15 +298,11 @@ class Musical_Hangman(Hangman):
     
         # Check if the request was successful
         if search_response.status_code == 200:
-            # print("Success!")
-            # print(search_response.json())  # Print the response body as JSON
             return f"{search_response.json()["tracks"]["items"][0]["external_urls"]["spotify"]}"
         else:
             print(f"Request failed with status code {search_response.status_code}")
             print(search_response.text)  # Print the search_response body
             return "Error with Spotify API request and/or response processing"
-
-        
 
 
 def main():
@@ -362,28 +362,36 @@ def choose_play_mode():
     print("Please choose between our two modes by typing A or B:")
     print(cyan("    A) Tradicional Hangman"))
     print(yellow("    B) Musical Hangman"))
+
     mode = input("Chosen mode: ")
     while re.fullmatch(r"^[abAB]$", mode) is None:
         print(red("Please type A or B."))
         mode = input("Chosen mode: ")
+
     return mode.upper()
 
 
 def get_guess(wrong_guess, right_guess):
     guess = input(magenta("Guess: ", "bright")).strip().lower()
+
     while re.fullmatch(r"^[a-z]$", guess) is None:
         print(red("Please, guess a single letter."))
         guess = input("Guess: ").strip().lower()
+
     while guess.upper() in wrong_guess or guess.upper() in right_guess:
         print(red("You already guessed this letter. Please, guess again."))
         guess = input("Guess: ").strip().lower()
+
     return guess
+
 
 def get_win_lose(outcome):
     if outcome == "won":
-        return (green("Congratulations! You won :)", "reverse"))
+        return green("Congratulations! You won :)", "reverse")
+    elif outcome == "lose":
+        return red("You lost :(", "reverse")
     else:
-        return (red("You lost :(", "reverse"))
+        return "Not sure about the outcome of the game :/"
 
 
 if __name__ == "__main__":
