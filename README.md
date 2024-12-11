@@ -150,7 +150,6 @@ Project Link: https://github.com/CarolinaCampi/musical_hangman
 
 
 ## Acknowledgments
-
 https://github.com/lyricstify/api
 https://github.com/othneildrew/Best-README-Template/blob/main/BLANK_README.md
 https://developer.spotify.com/documentation/web-api
