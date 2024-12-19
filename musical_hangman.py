@@ -145,7 +145,6 @@ class Musical_Hangman(Hangman):
 
         # 2. Choose a random song from that file
         self.get_random_song(category)
-        print(self.song)
 
         # 3. Get the lyrics from LYRIST API
         lyrics = self.get_lyrics(self.song)
@@ -213,6 +212,7 @@ class Musical_Hangman(Hangman):
     def get_lyrics(self, song):
         # Get the lyrics from LYRIST API
         response = requests.get("https://lyrist.vercel.app/api/" + song["song"].replace(" ", "_") + "/" + song["artist"].replace(" ", "_"))
+        print(response)
         # Get a list of the individual lines of lyrics
         lyrics = response.json()["lyrics"].split("\n")
         
@@ -347,7 +347,7 @@ def main():
     print("")
 
     # Print the lose message
-    print(*hangman.get_end_message("lost", word), sep="\n")
+    print(*hangman.get_end_message("lose", word), sep="\n")
     
 
 

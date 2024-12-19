@@ -13,6 +13,8 @@ def test_choose_play_mode():
 def test_get_guess():
     with patch("builtins.input", return_value="g"):
         assert get_guess(["q", "w"], ["a", "e"]) == "g"
+    with patch("builtins.input", return_value="guess"):
+        assert get_guess(["q", "w"], ["a", "e"]) == "g"
 
 
 def test_get_win_lose():
