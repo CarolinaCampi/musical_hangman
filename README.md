@@ -4,16 +4,14 @@
 
 A word game where you can use your music knowledge and your hangman abilities.
 
-<!-- TODO: Add link to youtube demo -->
-<a href="">View Demo</a>
+<a href="https://youtu.be/-TD5Anpxoz0">View Demo</a>
 
 <!-- TABLE OF CONTENTS -->
-<!-- TODO: Update to final version -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about-the-project">Description</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
       </ul>
@@ -33,11 +31,11 @@ A word game where you can use your music knowledge and your hangman abilities.
   </ol>
 </details>
 
-## About The Project
-<!-- TODO: Complete -->
+## Description
 Musical hangman is a command-line Python application that allows the user to play traditional and musical hangman from their terminal. The musical mode, specifically, selects a word from a lyric selected at random from a song belonging to the chosen category. The user has to guess, in typical hangman style, the word. The language for both modes is English.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## Built With
 - Python
@@ -48,6 +46,7 @@ Musical hangman is a command-line Python application that allows the user to pla
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
 ## Getting Started
 To use the project locally:
 
@@ -57,7 +56,6 @@ Before you begin, ensure you have met the following requirements:
 - Latest version of Python.
 - Working Windows, Mac or Linux computer.
 - Basic knowledge of use of the Unix terminal or Powershell interface.
-
 
 ### Installation
 
@@ -81,24 +79,6 @@ venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
-
-<!-- TODO: ADD API INSTRUCTIONS-->
-<!-- Get a free API Key at https://example.com
-Install NPM packages
-```sh
-npm install
-```
-Enter your API in config.js
-```sh
-const API_KEY = 'ENTER YOUR API';
-```
-Change git remote url to avoid accidental pushes to base project
-```sh
-git remote set-url origin github_username/repo_name
-```
-```sh
-git remote -v # confirm the changes
-``` -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -152,11 +132,40 @@ python .\musical_hangman.py
 </figure>
 
 #### Musical Hangman
-3. 
+3. If you choose option B: Musical Hangman, the instructions will be displayed, as well as the menu to pick a category.
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+<figure>
+    <img src="./data/screenshots/screenshot_music_choose_category_2.png" alt="Screenshot of the instructions and the categories available for the user to choose from." max-width="700">
+    <figcaption>Musicical hangman categories for the user to choose from.</figcaption>
+</figure>
 
+4. Choose a musical category from which the song and respective lyric will be selected at random. The initial gallows and word scheme to be guessed will be displayed along with the rest of the lyric, to give you more context for the guesses.
 
+<figure>
+    <img src="./data/screenshots/screenshot_music_first_guess_3.png" alt="Screenshot of the gallows, word scheme and Already guessed list displayed by the program after the user picks a category. The rest of the lyric is displayed as well." max-width="700">
+    <figcaption>Gallows and lyric with missing word ready for the user to make the first guess.</figcaption>
+</figure>
+
+5. You should type a single letter and see as the gallows, word scheme and Already guessed letters are updated. The next guess is asked for as well. 
+
+<figure>
+    <img src="./data/screenshots/screenshot_music_second_guess_4.png" alt="Screenshot of the gallows, word scheme and Already guessed list displayed by the program after the user guesses." max-width="700">
+    <figcaption>Updated gallows, word scheme and Already guessed list after the user guessed.</figcaption>
+</figure>
+
+6. Than continue guessing until the complete word is guessed or you run out of incorrect guesses (Max 6 incorrect guesses).
+
+- If you win:
+<figure>
+    <img src="./data/screenshots/screenshot_music_win_5.png" alt="Screenshot of the win scenario." max-width="700">
+    <figcaption>You win! The Spotify URL is provided if you want to listen to the song.</figcaption>
+</figure>
+
+- If you lose:
+<figure>
+    <img src="./data/screenshots/screenshot_music_lose_6.png" alt="Screenshot of the lose scenario." max-width="700">
+    <figcaption>You lost :( The Spotify URL is provided if you want to listen to the song.</figcaption>
+</figure>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

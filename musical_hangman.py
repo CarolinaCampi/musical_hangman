@@ -259,7 +259,7 @@ class Musical_Hangman(Hangman):
         message.append("")
         message.append("The complete lyric is:")
         message.append(green(self.lyric, "italic"))
-        message.append(f"From the song {self.song["song"].upper()} by {self.song["artist"].upper()}")
+        message.append(f'From the song {self.song["song"].upper()} by {self.song["artist"].upper()}')
         message.append("")
         message.append("Listen here: " + blue(self.get_spotify_track_url(), "underlined"))
         message.append("")
@@ -287,7 +287,9 @@ class Musical_Hangman(Hangman):
             print(f"Request failed with status code {response.status_code}")
             print(response.text)  # Print the response body
 
-        search_url = f"https://api.spotify.com/v1/search?q=remaster%2520track%3A{self.song["song"].replace(" ", "%2520")}%2520artist%3A{self.song["artist"].replace(" ", "%2520")}&type=track&limit=1&offset=0"
+        # Request the song Spotify's URL
+
+        search_url = f'https://api.spotify.com/v1/search?q=remaster%2520track%3A{self.song["song"].replace(" ", "%2520")}%2520artist%3A{self.song["artist"].replace(" ", "%2520")}&type=track&limit=1&offset=0'
         
         search_headers = {
             "Authorization": f"Bearer {access_token}"
@@ -298,7 +300,8 @@ class Musical_Hangman(Hangman):
     
         # Check if the request was successful
         if search_response.status_code == 200:
-            return f"{search_response.json()["tracks"]["items"][0]["external_urls"]["spotify"]}"
+            return f'{search_response.json()["tracks"]["items"][0]["external_urls"]["spotify"]}'
+
         else:
             print(f"Request failed with status code {search_response.status_code}")
             print(search_response.text)  # Print the search_response body
